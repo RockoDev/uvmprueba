@@ -76,5 +76,6 @@ const onSelect = selection => selectedProgram.value = selection
         </template>
       </VaCollapse>
     </VaAccordion>
+    <RegistrationForm v-if="selectedProgram" :program="selectedProgram" />
   </div>
 </template>
