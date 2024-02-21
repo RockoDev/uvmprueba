@@ -2,3 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --brand-red: #d7282f;
+}

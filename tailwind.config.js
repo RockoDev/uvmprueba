@@ -9,7 +9,11 @@ export default {
     "./error.vue",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'brand-red': 'var(--brand-red)',
+      },
+    },
   },
   plugins: [],
 }
