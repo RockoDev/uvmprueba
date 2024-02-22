@@ -3,6 +3,7 @@ const { pending: isLoading, data } = await useFetch('/api/programs', {
   lazy: true,
   server: false
 })
+const selection = ref(null)
 const programs = computed(() => data.value?.programs ?? [])
 </script>
 
@@ -15,7 +16,8 @@ const programs = computed(() => data.value?.programs ?? [])
         <p class="text-lg mb-8">Para comenzar tu emocionante viaje hacia el conocimiento y el éxito, necesitamos saber más sobre tus intereses y metas académicas. Por favor, tómate un momento para explorar nuestras diversas carreras y selecciona aquella que realmente te apasione. Estamos aquí para apoyarte en cada paso del camino y ayudarte a alcanzar tus objetivos.</p>
         <p class="text-lg mb-8">No dudes en preguntar si necesitas más información o asistencia. ¡Esperamos verte pronto en nuestro campus y ser parte de tu viaje hacia el éxito académico!</p>
       </article>
-      <ProgramSelector :isLoading="isLoading" :programs="programs" />
+      <ProgramSelector v-if="!selection" v-model="selection" :isLoading="isLoading" :programs="programs" />
+      <RegistrationForm v-if="selection" v-model="selection" :programs="programs" />
     </section>
   </NuxtLayout>
 </template>

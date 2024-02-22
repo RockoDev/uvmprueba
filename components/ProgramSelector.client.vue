@@ -8,9 +8,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  modelValue: {
+    type: Object,
+    default: null,
+  },
 })
 
-const selectedProgram = ref(null)
+const emit = defineEmits(['update:modelValue'])
+
+const modelValue = computed({
+  get: () => props.modelValue,
+  set: value => emit('update:modelValue', value),
+})
 
 const groupBy = (array, callback) => {
   const result = {}
@@ -41,7 +50,7 @@ const selectors = computed(() => {
   })
 })
 
-const onSelect = selection => selectedProgram.value = selection
+const onSelect = selection => modelValue.value = selection
 
 </script>
 
@@ -76,6 +85,5 @@ const onSelect = selection => selectedProgram.value = selection
         </template>
       </VaCollapse>
     </VaAccordion>
-    <RegistrationForm v-if="selectedProgram" :program="selectedProgram" />
   </div>
 </template>
