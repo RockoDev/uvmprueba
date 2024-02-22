@@ -8,9 +8,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  modelValue: {
+    type: Object,
+    default: null,
+  },
 })
 
-const selectedProgram = ref(null)
+const emit = defineEmits(['update:modelValue'])
+
+const modelValue = computed({
+  get: () => props.modelValue,
+  set: value => emit('update:modelValue', value),
+})
 
 const groupBy = (array, callback) => {
   const result = {}
@@ -29,9 +38,10 @@ const selectors = computed(() => {
       values: Object.entries(groupBy(values, ({ crmit_vertical }) => crmit_vertical)).map(([name, values]) => {
         return {
           name,
-          values: Object.entries(groupBy(values, ({ ofertando_crmit_name }) => ofertando_crmit_name)).map(([name, values]) => {
+          values: Object.entries(groupBy(values, ({ crmit_claveprogramabanner }) => crmit_claveprogramabanner)).map(([id, values]) => {
             return {
-              name,
+              id,
+              name: values?.[0]?.ofertando_crmit_name ?? '',
               values,
             }
           }),
@@ -41,7 +51,7 @@ const selectors = computed(() => {
   })
 })
 
-const onSelect = selection => selectedProgram.value = selection
+const onSelect = selection => modelValue.value = selection
 
 </script>
 
@@ -76,6 +86,5 @@ const onSelect = selection => selectedProgram.value = selection
         </template>
       </VaCollapse>
     </VaAccordion>
-    <RegistrationForm v-if="selectedProgram" :program="selectedProgram" />
   </div>
 </template>
