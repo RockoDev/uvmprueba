@@ -12,10 +12,12 @@
   "dependencies": {
     "@vuestic/nuxt": "^1.0.19",
     "nuxt": "^3.10.2",
+    "ua-parser-js": "^1.0.37",
     "vue": "^3.4.19",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@types/ua-parser-js": "^0.7.39",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1"
