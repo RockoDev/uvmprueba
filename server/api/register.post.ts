@@ -2,12 +2,25 @@ import parseUA from 'ua-parser-js'
 
 const sendData = async (data: {}) => {
   try {
-    const response = await fetch('https://webhooksqa.uvm.mx/proc-leads/lead/medios.php', {
+    const query = {
+      banner: 'bernardo',
+      CID: '2016705784.1697574806',
+      verify_token: 'UVM.G0-24',
+      marcable: 1,
+      gclid: '',
+      utm_campaign: '',
+    }
+    const url = new URL('https://webhooksqa.uvm.mx/proc-leads/lead/medios.php')
+    for (const [key, value] of Object.entries(query) ) {
+      url.searchParams.append(key, `${value}`)
+    }
+    const body = new FormData()
+    for (const [key, value] of Object.entries(data) ) {
+      body.append(key, `${value}`)
+    }
+    const response = await fetch(url.href, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+      body,
     })
     const json = await response.json()
     return { ok: response.ok, statusCode: response.status, ...json }
