@@ -9,12 +9,10 @@ const sendData = async (data: {}) => {
       },
       body: JSON.stringify(data),
     })
-    if ( !response.ok ) throw new Error(`Response status ${response.status}.`)
     const json = await response.json()
-    return { ok: true, ...json }
+    return { ok: response.ok, statusCode: response.status, ...json }
   } catch (error: any) {
-    console.error(error)
-    return { ok: false, error: error.message }
+    return { ok: false, statusCode: 500, message: error.message }
   }
 }
 
@@ -27,10 +25,10 @@ export default defineEventHandler(async (event) => {
   // if (!Number.isInteger(id)) {
   //   throw createError({
   //     statusCode: 400,
-  //     statusMessage: 'ID should be an integer',
+  //     statusMessage: 'Error',
   //   })
   // }
-  const data = {
+  const payload = {
     nombre: body?.firstname,
     apaterno: body?.lastname,
     email: body?.email,
@@ -53,10 +51,12 @@ export default defineEventHandler(async (event) => {
     gclid: '',
     utm_campaign: '',
   }
-  // const response = await sendData(data)
+
+  const response = await sendData(payload)
+  setResponseStatus(event, response.statusCode)
 
   return {
-    body,
-    data,
+    payload,
+    response,
   }
 })
