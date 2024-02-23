@@ -13,6 +13,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const isLoading = ref(false)
+const errorMessage = ref(null)
 const isFormSent = ref(false)
 
 const firstname = ref('')
@@ -55,6 +56,13 @@ const onSubmit = async event => {
       phone: phone.value,
       program: selectedProgramAndCampus.value,
     }
+
+    // Validación básica
+    if ( !body.firstname ) throw new Error('Por favor ingresa tu nombre.')
+    if ( !body.lastname ) throw new Error('Por favor ingresa tu apellido.')
+    if ( !body.email ) throw new Error('Por favor ingresa tu email.')
+    if ( !body.phone ) throw new Error('Por favor ingresa tu teléfono celular.')
+    if ( !body.program ) throw new Error('Es necesario seleccionar un campus.')
   
     const response = await fetch('/api/register', {
       method: 'POST',
@@ -64,12 +72,12 @@ const onSubmit = async event => {
       },
       body: JSON.stringify(body),
     })
-    if ( !response.ok ) throw new Error('Response status ${response.status} ${response.statusText')
-    isFormSent.value = response.ok
+    if ( !response.ok && response.status !== 400 ) throw new Error('Ocurrió un error al enviar el formulario. Por favor intenta de nuevo.')
     const json = await response.json()
-    console.log(json)
+    errorMessage.value = response.status === 400 ? json?.response?.message : null
+    if (response.ok) isFormSent.value = response.ok
   } catch (error) {
-    console.error(error)
+    errorMessage.value = error.message
   } finally {
     isLoading.value = false
   }
@@ -126,6 +134,9 @@ onMounted(() => {
               <Loading v-if="isLoading" class="w-5 h-5" />
               <span v-else>Enviar</span>
             </button>
+          </div>
+          <div v-if="errorMessage" class="p-4 text-center text-red-500 bg-red-100 rounded">
+            {{ errorMessage }}
           </div>
           <div class="flex items-center justify-center">
             <button type="button" :disabled="isLoading" @click.prevent="onReset" class="py-1 px-6 text-sm rounded-lg cursor-pointer focus:outline-none focus:shadow-outline-blue text-gray-700 bg-gray-100 hover:bg-red-200">Seleccionar otra oferta académica</button>
