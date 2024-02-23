@@ -37,9 +37,9 @@ export default defineEventHandler(async (event) => {
     campusLargo: body?.program?.nombrelargo_campus,
     carrera: body?.program?.ofertando_crmit_name,
     carreraInteres: body?.program?.carrerainteres,
-    subNivelInteres: body?.program?.subNivelInteres,
-    nivelInteres: body?.program?.nivelInteres,
-    ciclo: body?.program?.crmit_ciclo,
+    subNivelInteres: body?.program?.crmit_modalidad,
+    nivelInteres: body?.program?.crmit_nivelcrm,
+    ciclo: body?.program?.crmit_cicloreinscripciones,
 
     urlreferrer: referer,
     dispositivo: `${ua.device.model} (${ua.device.vendor}) - ${ua.browser.name} ${ua.browser.version}`,
