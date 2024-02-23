@@ -2,19 +2,30 @@ import parseUA from 'ua-parser-js'
 
 const sendData = async (data: {}) => {
   try {
-    const response = await fetch('https://webhooksqa.uvm.mx/proc-leads/lead/medios.php', {
+    const query = {
+      banner: 'bernardo',
+      CID: '2016705784.1697574806',
+      verify_token: 'UVM.G0-24',
+      marcable: 1,
+      gclid: '',
+      utm_campaign: '',
+    }
+    const url = new URL('https://webhooksqa.uvm.mx/proc-leads/lead/medios.php')
+    for (const [key, value] of Object.entries(query) ) {
+      url.searchParams.append(key, `${value}`)
+    }
+    const body = new FormData()
+    for (const [key, value] of Object.entries(data) ) {
+      body.append(key, `${value}`)
+    }
+    const response = await fetch(url.href, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+      body,
     })
-    if ( !response.ok ) throw new Error(`Response status ${response.status}.`)
     const json = await response.json()
-    return { ok: true, ...json }
+    return { ok: response.ok, statusCode: response.status, ...json }
   } catch (error: any) {
-    console.error(error)
-    return { ok: false, error: error.message }
+    return { ok: false, statusCode: 500, message: error.message }
   }
 }
 
@@ -27,10 +38,10 @@ export default defineEventHandler(async (event) => {
   // if (!Number.isInteger(id)) {
   //   throw createError({
   //     statusCode: 400,
-  //     statusMessage: 'ID should be an integer',
+  //     statusMessage: 'Error',
   //   })
   // }
-  const data = {
+  const payload = {
     nombre: body?.firstname,
     apaterno: body?.lastname,
     email: body?.email,
@@ -39,9 +50,9 @@ export default defineEventHandler(async (event) => {
     campusLargo: body?.program?.nombrelargo_campus,
     carrera: body?.program?.ofertando_crmit_name,
     carreraInteres: body?.program?.carrerainteres,
-    subNivelInteres: body?.program?.subNivelInteres,
-    nivelInteres: body?.program?.nivelInteres,
-    ciclo: body?.program?.crmit_ciclo,
+    subNivelInteres: body?.program?.crmit_modalidad,
+    nivelInteres: body?.program?.crmit_nivelcrm,
+    ciclo: body?.program?.crmit_cicloreinscripciones,
 
     urlreferrer: referer,
     dispositivo: `${ua.device.model} (${ua.device.vendor}) - ${ua.browser.name} ${ua.browser.version}`,
@@ -53,10 +64,12 @@ export default defineEventHandler(async (event) => {
     gclid: '',
     utm_campaign: '',
   }
-  // const response = await sendData(data)
+
+  const response = await sendData(payload)
+  setResponseStatus(event, response.statusCode)
 
   return {
-    body,
-    data,
+    payload,
+    response,
   }
 })
